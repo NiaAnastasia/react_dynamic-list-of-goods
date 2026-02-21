@@ -9,21 +9,33 @@ import { Good } from './types/Good';
 
 export const App: React.FC = () => {
   const [goods, setGoods] = useState<Good[]>([]);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    getAll().then(setGoods);
+    getAll()
+      .then(setGoods)
+      .catch(() => setHasError(true));
   }, []);
 
-  const loadAll = () => {
-    getAll().then(setGoods);
-  };
+  function loadAll() {
+    setHasError(false);
+    getAll()
+      .then(setGoods)
+      .catch(() => setHasError(true));
+  }
 
   const loadFirstFive = () => {
-    get5First().then(setGoods);
+    setHasError(false);
+    get5First()
+      .then(setGoods)
+      .catch(() => setHasError(true));
   };
 
   const loadRed = () => {
-    getRed().then(setGoods);
+    setHasError(false);
+    getRed()
+      .then(setGoods)
+      .catch(() => setHasError(true));
   };
 
   return (
@@ -41,6 +53,12 @@ export const App: React.FC = () => {
       <button type="button" data-cy="red-button" onClick={loadRed}>
         Load red goods
       </button>
+
+      {hasError && (
+        <p data-cy="error-message" style={{ color: 'red' }}>
+          Something went wrong!
+        </p>
+      )}
 
       <GoodsList goods={goods} />
     </div>
